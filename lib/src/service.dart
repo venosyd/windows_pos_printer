@@ -20,7 +20,13 @@ class USBService {
       ...results
           .where((entry) => entry.isAvailable)
           .toList()
-          .map((e) => USBPrinter(name: e.name, address: e.url))
+          .map(
+            (e) => USBPrinter(
+              name: e.name,
+              address: e.url,
+              connected: e.isAvailable,
+            ),
+          )
           .toList()
     ];
 
