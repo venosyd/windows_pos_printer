@@ -56,7 +56,9 @@ _scan() async {
 
 ## Getting Started
 ```
-  flutter pub add windows_pos_printer
+  dependencies:
+    windows_pos_printer:
+      git: git@github.com:venosyd/windows_pos_printer.git
 ```
 
 Thank to :
