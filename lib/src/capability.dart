@@ -8,29 +8,7 @@
 // ignore_for_file: avoid_print
 library windows_pos_printer.capability;
 
-import 'dart:convert' show json;
-
-import 'package:flutter/services.dart' show rootBundle;
-
-///
-final printProfiles = <Map>[];
-
-///
-var printCapabilities = {};
-
-///
-///
-///
-class CodePage {
-  ///
-  CodePage(this.id, this.name);
-
-  ///
-  int id;
-
-  ///
-  String name;
-}
+import 'profiles.dart';
 
 ///
 ///
@@ -51,30 +29,6 @@ class CapabilityProfile {
   static Future ensureProfileLoaded({String? path}) async {
     /// check where this global capabilities is empty then load capabilities.json
     /// else do nothing
-    if (printCapabilities.isEmpty == true) {
-      final content = await rootBundle.loadString(
-        path ?? 'packages/windows_pos_printer/assets/capabilities.json',
-      );
-
-      var _capabilities = json.decode(content);
-      printCapabilities = Map.from(_capabilities);
-
-      _capabilities['profiles'].forEach((k, v) {
-        printProfiles.add({
-          'key': k,
-          'vendor': v['vendor'] is String ? v['vendor'] : '',
-          'name': v['name'] is String ? v['name'] : '',
-          'description': v['description'] is String ? v['description'] : '',
-        });
-      });
-
-      /// assert that the capabilities will be not empty
-      assert(printCapabilities.isNotEmpty);
-    }
-    //
-    else {
-      print("capabilities.length is already loaded");
-    }
   }
 
   /// Public factory
@@ -125,4 +79,18 @@ class CapabilityProfile {
 
     return res;
   }
+}
+
+///
+///
+///
+class CodePage {
+  ///
+  CodePage(this.id, this.name);
+
+  ///
+  int id;
+
+  ///
+  String name;
 }
