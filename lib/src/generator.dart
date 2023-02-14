@@ -10,6 +10,7 @@ library windows_pos_print.generator;
 import 'dart:convert';
 import 'dart:typed_data' show Uint8List;
 
+import 'package:flutter/services.dart';
 import 'package:hex/hex.dart';
 import 'package:image/image.dart';
 
@@ -189,18 +190,22 @@ class Generator {
     final widthPx = (image.width + lineHeight) - (image.width % lineHeight);
     final heightPx = image.height;
 
+    final black = ColorInt8.rgb(0, 0, 0);
+
     // Create a black bottom layer
     final biggerImage = copyResize(image, width: widthPx, height: heightPx);
-    fill(biggerImage, 0);
+    fill(biggerImage, color: black);
+
     // Insert source image into bigger one
-    drawImage(biggerImage, image, dstX: 0, dstY: 0);
+    // drawPixel(biggerImage, image, dstX: 0, dstY: 0);
 
     var left = 0;
     final blobs = <List<int>>[];
 
     while (left < widthPx) {
-      final slice = copyCrop(biggerImage, left, 0, lineHeight, heightPx);
-      final bytes = slice.getBytes(format: Format.luminance);
+      final slice = copyCrop(biggerImage,
+          x: left, y: 0, height: lineHeight, width: heightPx);
+      final bytes = slice.getBytes();
 
       blobs.add(bytes);
       left += lineHeight;
@@ -221,7 +226,7 @@ class Generator {
 
     // R/G/B channels are same -> keep only one channel
     final oneChannelBytes = <int>[];
-    final buffer = image.getBytes(format: Format.rgba);
+    final buffer = image.getBytes(order: ChannelOrder.grayAlpha);
     for (int i = 0; i < buffer.length; i += 4) {
       oneChannelBytes.add(buffer[i]);
     }
@@ -609,7 +614,6 @@ class Generator {
           );
           // Define the absolute position only once (we print one line only)
           // colInd = null;
-
         }
       }
     }
@@ -633,8 +637,8 @@ class Generator {
     final image = Image.from(imgSrc); // make a copy
 
     invert(image);
-    flip(image, Flip.horizontal);
-    final imageRotated = copyRotate(image, 270);
+    flip(image, direction: FlipDirection.horizontal);
+    final imageRotated = copyRotate(image, angle: 270);
 
     const lineHeight = 3;
     final blobs = _toColumnFormat(imageRotated, lineHeight * 8);
