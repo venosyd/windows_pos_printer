@@ -65,10 +65,11 @@ class CapabilityProfile {
     /// ensure the capabilities is not empty
     await ensureProfileLoaded();
 
-    var _profiles = printCapabilities['profiles'];
+    var profiles = printCapabilities['profiles'];
+
     final res = [];
 
-    _profiles.forEach((k, v) {
+    profiles.forEach((k, v) {
       res.add({
         'key': k,
         'vendor': v['vendor'] is String ? v['vendor'] : '',
