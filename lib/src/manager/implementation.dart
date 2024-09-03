@@ -38,7 +38,7 @@ class WindowsPOSManager extends PrinterManager {
     super.profile = profile;
     super.spaceBetweenRows = spaceBetweenRows;
     super.port = port;
-    
+
     generator = Generator(
       paperSizeWidthMM,
       maxPerLine,
@@ -85,18 +85,24 @@ class WindowsPOSManager extends PrinterManager {
       szPrinterName = printer.name!.toNativeUtf16();
 
       final phPrinter = calloc<HANDLE>();
+
       if (OpenPrinter(szPrinterName, phPrinter, nullptr) == FALSE) {
         isConnected = false;
         printer.connected = false;
+
         return Future<ConnectionResponse>.value(
             ConnectionResponse.printerNotConnected);
-      } else {
+      }
+      //
+      else {
         hPrinter = phPrinter.value;
         isConnected = true;
         printer.connected = true;
         return Future<ConnectionResponse>.value(ConnectionResponse.success);
       }
-    } catch (e) {
+    }
+    //
+    catch (e) {
       isConnected = false;
       printer.connected = false;
       return Future<ConnectionResponse>.value(ConnectionResponse.timeout);
